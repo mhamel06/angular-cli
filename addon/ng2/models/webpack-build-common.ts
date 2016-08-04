@@ -4,6 +4,7 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as webpack from 'webpack';
 import { ForkCheckerPlugin } from 'awesome-typescript-loader';
 import { CliConfig } from './config';
+import * as autoprefixer from 'autoprefixer';
 
 export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
   return {
@@ -27,6 +28,7 @@ export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
           test: /\.js$/,
           loader: 'source-map-loader',
           exclude: [
+            path.resolve(projectRoot, 'node_modules/@ngrx'),
             path.resolve(projectRoot, 'node_modules/rxjs'),
             path.resolve(projectRoot, 'node_modules/@angular'),
           ]
@@ -58,6 +60,7 @@ export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
         { test: /\.html$/, loader: 'raw-loader' }
       ]
     },
+    postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ],
     plugins: [
       new ForkCheckerPlugin(),
       new HtmlWebpackPlugin({
