@@ -31,6 +31,7 @@ const getWebpackTestConfig = function(projectRoot, sourceDir) {
           test: /\.js$/,
           loader: 'source-map-loader',
           exclude: [
+            path.resolve(projectRoot, 'node_modules/@ngrx'),  
             path.resolve(projectRoot, 'node_modules/rxjs'),
             path.resolve(projectRoot, 'node_modules/@angular')
           ]
