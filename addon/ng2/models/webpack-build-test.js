@@ -87,6 +87,7 @@ const getWebpackTestConfig = function(projectRoot, sourceDir) {
       resourcePath: `./${sourceDir}`
     },
     node: {
+      fs: 'empty',
       global: 'window',
       process: false,
       crypto: 'empty',
