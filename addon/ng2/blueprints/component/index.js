@@ -5,6 +5,7 @@ var dynamicPathParser = require('../../utilities/dynamic-path-parser');
 var addBarrelRegistration = require('../../utilities/barrel-management');
 var getFiles = Blueprint.prototype.files;
 const stringUtils = require('ember-cli-string-utils');
+const astUtils = require('../../utilities/ast-utils');
 
 module.exports = {
   description: '',
@@ -119,13 +120,25 @@ module.exports = {
       return;
     }
 
+    const returns = [];
+    const modulePath = path.join(this.project.root, this.dynamicPath.appRoot, 'app.module.ts');
+    const className = stringUtils.classify(`${options.entity.name}Component`);
+    const fileName = stringUtils.dasherize(`${options.entity.name}.component`);
+    const componentDir = path.relative(this.dynamicPath.appRoot, this.generatePath);
+    const importPath = componentDir ? `./${componentDir}/${fileName}` : `./${fileName}`;
+
     if (!options.flat) {
-      return addBarrelRegistration(this, this.generatePath);
+      returns.push(addBarrelRegistration(this, componentDir));
     } else {
-      return addBarrelRegistration(
-        this,
-        this.generatePath,
-        options.entity.name + '.component');
+      returns.push(addBarrelRegistration(this, componentDir, fileName));
     }
+
+    if (!options['skip-import']) {
+      returns.push(
+        astUtils.addComponentToModule(modulePath, className, importPath)
+          .then(change => change.apply()));
+    }
+
+    return Promise.all(returns);
   }
 };
