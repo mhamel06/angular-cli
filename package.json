@@ -1,6 +1,6 @@
 {
   "name": "angular-cli",
-  "version": "1.0.0-beta.11-webpack-ngrx-4",
+  "version": "1.0.0-beta.11-webpack-ngrx-6",
   "description": "CLI tool for Angular",
   "main": "lib/cli/index.js",
   "trackingCode": "UA-8594346-19",
@@ -96,7 +96,8 @@
     "webpack": "2.1.0-beta.18",
     "webpack-dev-server": "2.1.0-beta.0",
     "webpack-md5-hash": "0.0.5",
-    "webpack-merge": "^0.14.0"
+    "webpack-merge": "^0.14.0",
+    "string-replace-loader": "^1.0.3"
   },
   "ember-addon": {
     "paths": [
