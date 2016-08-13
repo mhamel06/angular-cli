@@ -35,6 +35,15 @@ const getWebpackTestConfig = function(projectRoot, sourceDir) {
             path.resolve(projectRoot, 'node_modules/rxjs'),
             path.resolve(projectRoot, 'node_modules/@angular')
           ]
+        },
+        {
+          test: /.js$/,
+          loader: 'string-replace-loader',
+          query: {
+            search: 'moduleId: module.id,',
+            replace: '',
+            flags: 'g'
+          }
         }
       ],
       loaders: [

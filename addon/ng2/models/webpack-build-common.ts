@@ -8,7 +8,7 @@ import * as autoprefixer from 'autoprefixer';
 
 export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
   return {
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     resolve: {
       extensions: ['', '.ts', '.js'],
       root: path.resolve(projectRoot, `./${sourceDir}`)
