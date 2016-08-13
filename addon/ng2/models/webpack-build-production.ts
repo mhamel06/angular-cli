@@ -22,11 +22,7 @@ export const getWebpackProdConfigPartial = function(projectRoot: string, sourceD
       new webpack.optimize.UglifyJsPlugin({
         beautify: false, //prod
         mangle: { screw_ie8 : true, keep_fnames: true }, //prod
-<<<<<<< HEAD
         compress: { screw_ie8: true, warnings: false }, //prod
-=======
-        compress: { screw_ie8: true }, //prod
->>>>>>> 9188ea2bf2b3bbbba2b3640d9c08916f29d8d3f2
         comments: false //prod
       }),
       new CompressionPlugin({
