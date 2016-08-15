@@ -2,9 +2,15 @@ import * as path from 'path';
 import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as webpack from 'webpack';
+import { ContextReplacementPlugin } from 'webpack';
 import { ForkCheckerPlugin } from 'awesome-typescript-loader';
 import { CliConfig } from './config';
 import * as autoprefixer from 'autoprefixer';
+import 'core-js/es6';
+import 'core-js/es7/reflect';
+import 'ts-helpers';
+
+const resolveNgRoute = require('@angularclass/resolve-angular-routes')
 
 export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
   return {
@@ -24,6 +30,15 @@ export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
     },
     module: {
       preLoaders: [
+        // {
+        //   test: /(systemjs_component_resolver|system_js_ng_module_factory_loader)\.js$/,
+        //   loader: 'string-replace-loader',
+        //   query: {
+        //     search: '(lang_1(.*[\\n\\r]\\s*\\.|\\.))?(global(.*[\\n\\r]\\s*\\.|\\.))?(System|SystemJS)(.*[\\n\\r]\\s*\\.|\\.)import',
+        //     replace: 'System.import',
+        //     flags: 'g'
+        //   }
+        // },
         {
           test: /\.js$/,
           loader: 'source-map-loader',
@@ -71,6 +86,11 @@ export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
     },
     postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ],
     plugins: [
+      new ContextReplacementPlugin(
+        /angular\/core\/(esm\/src|src)\/linker/,
+        path.resolve(projectRoot, `./${sourceDir}/`),
+        resolveNgRoute(path.resolve(projectRoot, `./${sourceDir}/`))
+      ),
       new ForkCheckerPlugin(),
       new HtmlWebpackPlugin({
         template: path.resolve(projectRoot, `./${sourceDir}/index.html`),
