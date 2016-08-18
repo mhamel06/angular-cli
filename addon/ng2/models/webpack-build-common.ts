@@ -30,15 +30,15 @@ export function getWebpackCommonConfig(projectRoot: string, sourceDir: string) {
     },
     module: {
       preLoaders: [
-        // {
-        //   test: /(systemjs_component_resolver|system_js_ng_module_factory_loader)\.js$/,
-        //   loader: 'string-replace-loader',
-        //   query: {
-        //     search: '(lang_1(.*[\\n\\r]\\s*\\.|\\.))?(global(.*[\\n\\r]\\s*\\.|\\.))?(System|SystemJS)(.*[\\n\\r]\\s*\\.|\\.)import',
-        //     replace: 'System.import',
-        //     flags: 'g'
-        //   }
-        // },
+        {
+          test: /(systemjs_component_resolver|system_js_ng_module_factory_loader)\.js$/,
+          loader: 'string-replace-loader',
+          query: {
+            search: '(lang_1(.*[\\n\\r]\\s*\\.|\\.))?(global(.*[\\n\\r]\\s*\\.|\\.))?(System|SystemJS)(.*[\\n\\r]\\s*\\.|\\.)import',
+            replace: 'System.import',
+            flags: 'g'
+          }
+        },
         {
           test: /\.js$/,
           loader: 'source-map-loader',
