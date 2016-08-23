@@ -106,11 +106,11 @@ export function getWebpackCommonConfig(projectRoot: string, environment: string,
     },
     postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ],
     plugins: [
-      new webpack.ContextReplacementPlugin(
-        /angular\/core\/(esm\/src|src)\/linker/,
-        path.resolve(projectRoot, `./${sourceDir}/`),
-        resolveNgRoute(path.resolve(projectRoot, `./${sourceDir}/`))
-      ),
+      // new webpack.ContextReplacementPlugin(
+      //   /angular\/core\/(esm\/src|src)\/linker/,
+      //   path.resolve(appRoot,,
+      //   resolveNgRoute(path.resolve(projectRoot, `./${sourceDir}/`))
+      // ),
       new webpack.ContextReplacementPlugin(/.*/, appRoot, lazyModules),
       new atl.ForkCheckerPlugin(),
       new HtmlWebpackPlugin({
