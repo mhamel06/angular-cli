@@ -16,7 +16,7 @@ export const getWebpackProdConfigPartial = function(projectRoot: string, appConf
     },
     plugins: [
       new WebpackMd5Hash(),
-      new webpack.optimize.DedupePlugin(),
+      // new webpack.optimize.DedupePlugin(),
       // ~107kb
       new webpack.optimize.UglifyJsPlugin({
         beautify: false, //prod
