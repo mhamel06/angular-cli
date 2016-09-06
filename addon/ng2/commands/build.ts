@@ -17,7 +17,7 @@ module.exports = Command.extend({
   aliases: ['b'],
 
   availableOptions: [
-    { name: 'target',         type: String,  default: 'development', aliases: ['t', { 'dev': 'development' }, { 'prod': 'production' }] },
+    { name: 'target',         type: String,  default: 'development', aliases: ['t', { 'dev': 'development' }, { 'prod': 'production' }, { 'nat': 'native' }, ] },
     { name: 'environment',    type: String,  default: '', aliases: ['e'] },
     { name: 'output-path',    type: 'Path',  default: 'dist/',       aliases: ['o'] },
     { name: 'watch',          type: Boolean, default: false,         aliases: ['w'] },
@@ -32,6 +32,9 @@ module.exports = Command.extend({
       }
       if (commandOptions.target === 'production') {
         commandOptions.environment = 'prod';
+      } 
+      if (commandOptions.target === 'native') {
+        commandOptions.environment = 'nat';
       } 
     }
 

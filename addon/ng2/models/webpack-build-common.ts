@@ -18,11 +18,13 @@ export function getWebpackCommonConfig(projectRoot: string, environment: string,
   let entry = { 
     main: [appMain]
   };
-
+const METADATA = {
+  title: 'My App',
+  baseUrl: '/'
+};
   // Only add styles/scripts if there's actually entries there
   if (appConfig.styles.length > 0) entry.styles = styles;
   if (appConfig.scripts.length > 0) entry.scripts = scripts;
-
   return {
     devtool: 'source-map',
     resolve: {
@@ -31,6 +33,8 @@ export function getWebpackCommonConfig(projectRoot: string, environment: string,
     },
     context: path.resolve(__dirname, './'),
     entry: entry,
+    metadata: METADATA,
+    isNative: false,
     output: {
       path: path.resolve(projectRoot, appConfig.outDir),
       filename: '[name].bundle.js'
@@ -97,7 +101,7 @@ export function getWebpackCommonConfig(projectRoot: string, environment: string,
 
         { test: /\.json$/, loader: 'json-loader' },
         { test: /\.(jpg|png)$/, loader: 'url-loader?limit=10000' },
-        { test: /\.html$/, loader: 'raw-loader' },
+        { test: /\.html$/, loader: 'raw-loader', exclude: [path.resolve(appRoot, appConfig.index)] },
 
         { test: /\.(woff|ttf|svg)$/, loader: 'url?limit=10000' },
         { test: /\.woff2$/, loader: 'url?limit=10000&mimetype=font/woff2' },

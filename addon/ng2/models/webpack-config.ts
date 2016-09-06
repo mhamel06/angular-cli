@@ -6,6 +6,7 @@ import {
   getWebpackCommonConfig,
   getWebpackDevConfigPartial,
   getWebpackProdConfigPartial,
+  getWebpackNativeConfigPartial,
   getWebpackMobileConfigPartial,
   getWebpackMobileProdConfigPartial
 } from './';
@@ -16,18 +17,20 @@ export class NgCliWebpackConfig {
   public config: any;
   private webpackDevConfigPartial: any;
   private webpackProdConfigPartial: any;
+  private webpackNativeConfigPartial: any;
   private webpackBaseConfig: any;
   private webpackMobileConfigPartial: any;
   private webpackMobileProdConfigPartial: any;
 
   constructor(public ngCliProject: any, public target: string, public environment: string, outputDir?: string) {
     const appConfig = CliConfig.fromProject().apps[0];
-
+    console.log(appConfig);
     appConfig.outDir = outputDir || appConfig.outDir; 
 
     this.webpackBaseConfig = getWebpackCommonConfig(this.ngCliProject.root, environment, appConfig);
     this.webpackDevConfigPartial = getWebpackDevConfigPartial(this.ngCliProject.root, appConfig);
     this.webpackProdConfigPartial = getWebpackProdConfigPartial(this.ngCliProject.root, appConfig);
+    this.webpackNativeConfigPartial = getWebpackNativeConfigPartial(this.ngCliProject.root, appConfig);
 
     if (CliConfig.fromProject().apps[0].mobile){
       this.webpackMobileConfigPartial = getWebpackMobileConfigPartial(this.ngCliProject.root, appConfig);
@@ -46,6 +49,9 @@ export class NgCliWebpackConfig {
         break;
       case "production":
         this.config = webpackMerge(this.webpackBaseConfig, this.webpackProdConfigPartial);
+        break;
+      case "native":
+        this.config = webpackMerge(this.webpackBaseConfig, this.webpackNativeConfigPartial);
         break;
       default:
         throw new Error("Invalid build target. Only 'development' and 'production' are available.");
