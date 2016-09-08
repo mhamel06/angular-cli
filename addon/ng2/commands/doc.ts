@@ -1,5 +1,5 @@
-import * as Command from 'ember-cli/lib/models/command';
-import * as DocTask from '../tasks/doc';
+const Command = require('ember-cli/lib/models/command');
+import { DocTask } from '../tasks/doc';
 
 const DocCommand = Command.extend({
   name: 'doc',
@@ -10,10 +10,10 @@ const DocCommand = Command.extend({
     '<keyword>'
   ],
 
-  run: function(commandOptions, rawArgs:Array<string>) {
-    var keyword = rawArgs[0];
-    
-    var docTask = new DocTask({
+  run: function(commandOptions: any, rawArgs: Array<string>) {
+    const keyword = rawArgs[0];
+
+    const docTask = new DocTask({
       ui: this.ui,
       analytics: this.analytics,
       project: this.project
@@ -23,4 +23,4 @@ const DocCommand = Command.extend({
   }
 });
 
-module.exports = DocCommand;
+export default DocCommand;

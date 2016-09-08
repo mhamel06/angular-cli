@@ -1,8 +1,8 @@
-import * as TestCommand from 'ember-cli/lib/commands/test';
-import * as config from '../models/config';
-import * as TestTask from '../tasks/test';
+const TestCommand = require('ember-cli/lib/commands/test');
+import TestTask from '../tasks/test';
+import {CliConfig} from '../models/config';
 
-module.exports = TestCommand.extend({
+const NgCliTestCommand = TestCommand.extend({
   availableOptions: [
     { name: 'watch', type: Boolean, default: true, aliases: ['w'] },
     { name: 'browsers', type: String },
@@ -13,10 +13,10 @@ module.exports = TestCommand.extend({
     { name: 'build', type: Boolean, default: true }
   ],
 
-  run: function (commandOptions) {
-    this.project.ngConfig = this.project.ngConfig || config.CliConfig.fromProject();
+  run: function(commandOptions: any) {
+    this.project.ngConfig = this.project.ngConfig || CliConfig.fromProject();
 
-    var testTask = new TestTask({
+    const testTask = new TestTask({
       ui: this.ui,
       analytics: this.analytics,
       project: this.project
@@ -30,4 +30,5 @@ module.exports = TestCommand.extend({
   }
 });
 
-module.exports.overrideCore = true;
+NgCliTestCommand.overrideCore = true;
+export default NgCliTestCommand;

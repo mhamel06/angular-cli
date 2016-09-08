@@ -1,7 +1,6 @@
 import * as path from 'path';
-import * as webpackMerge from 'webpack-merge'; // used to merge webpack configs
-import * as WebpackMd5Hash from 'webpack-md5-hash';
-import * as CompressionPlugin from 'compression-webpack-plugin';
+const WebpackMd5Hash = require('webpack-md5-hash');
+const CompressionPlugin = require('compression-webpack-plugin');
 import * as webpack from 'webpack';
 
 export const getWebpackProdConfigPartial = function(projectRoot: string, appConfig: any) {
@@ -16,13 +15,9 @@ export const getWebpackProdConfigPartial = function(projectRoot: string, appConf
     },
     plugins: [
       new WebpackMd5Hash(),
-      // new webpack.optimize.DedupePlugin(),
-      // ~107kb
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false, //prod
-        mangle: { screw_ie8 : true, keep_fnames: true }, //prod
-        compress: { screw_ie8: true, warnings: false }, //prod
-        comments: false //prod
+      new webpack.optimize.UglifyJsPlugin(<any>{
+        mangle: { screw_ie8 : true },
+        compress: { screw_ie8: true }
       }),
       new CompressionPlugin({
           asset: '[path].gz[query]',
@@ -57,5 +52,5 @@ export const getWebpackProdConfigPartial = function(projectRoot: string, appConf
       clearImmediate: false,
       setImmediate: false
     }
-  }
+  };
 };

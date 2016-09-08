@@ -1,6 +1,4 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import * as webpackMerge from 'webpack-merge';
+const webpackMerge = require('webpack-merge');
 import { CliConfig } from './config';
 import {
   getWebpackCommonConfig,
@@ -15,28 +13,39 @@ export class NgCliWebpackConfig {
   // TODO: When webpack2 types are finished lets replace all these any types
   // so this is more maintainable in the future for devs
   public config: any;
-  private webpackDevConfigPartial: any;
-  private webpackProdConfigPartial: any;
-  private webpackNativeConfigPartial: any;
-  private webpackBaseConfig: any;
-  private webpackMobileConfigPartial: any;
-  private webpackMobileProdConfigPartial: any;
+  private devConfigPartial: any;
+  private prodConfigPartial: any;
+  private baseConfig: any;
+  private nativeConfigPartial: any;
 
-  constructor(public ngCliProject: any, public target: string, public environment: string, outputDir?: string) {
-    const appConfig = CliConfig.fromProject().apps[0];
-    console.log(appConfig);
-    appConfig.outDir = outputDir || appConfig.outDir; 
+  constructor(
+    public ngCliProject: any,
+    public target: string,
+    public environment: string,
+    outputDir?: string,
+    baseHref?: string
+  ) {
+    const config: CliConfig = CliConfig.fromProject();
+    const appConfig = config.config.apps[0];
 
-    this.webpackBaseConfig = getWebpackCommonConfig(this.ngCliProject.root, environment, appConfig);
-    this.webpackDevConfigPartial = getWebpackDevConfigPartial(this.ngCliProject.root, appConfig);
-    this.webpackProdConfigPartial = getWebpackProdConfigPartial(this.ngCliProject.root, appConfig);
-    this.webpackNativeConfigPartial = getWebpackNativeConfigPartial(this.ngCliProject.root, appConfig);
+    appConfig.outDir = outputDir || appConfig.outDir;
 
-    if (CliConfig.fromProject().apps[0].mobile){
-      this.webpackMobileConfigPartial = getWebpackMobileConfigPartial(this.ngCliProject.root, appConfig);
-      this.webpackMobileProdConfigPartial = getWebpackMobileProdConfigPartial(this.ngCliProject.root, appConfig);
-      this.webpackBaseConfig = webpackMerge(this.webpackBaseConfig, this.webpackMobileConfigPartial);
-      this.webpackProdConfigPartial = webpackMerge(this.webpackProdConfigPartial, this.webpackMobileProdConfigPartial);
+    this.baseConfig = getWebpackCommonConfig(
+      this.ngCliProject.root,
+      environment,
+      appConfig,
+      baseHref
+    );
+    this.devConfigPartial = getWebpackDevConfigPartial(this.ngCliProject.root, appConfig);
+    this.prodConfigPartial = getWebpackProdConfigPartial(this.ngCliProject.root, appConfig);
+    this.nativeConfigPartial = getWebpackNativeConfigPartial(this.ngCliProject.root, appConfig);
+
+    if (appConfig.mobile) {
+      let mobileConfigPartial = getWebpackMobileConfigPartial(this.ngCliProject.root, appConfig);
+      let mobileProdConfigPartial = getWebpackMobileProdConfigPartial(this.ngCliProject.root,
+                                                                      appConfig);
+      this.baseConfig = webpackMerge(this.baseConfig, mobileConfigPartial);
+      this.prodConfigPartial = webpackMerge(this.prodConfigPartial, mobileProdConfigPartial);
     }
 
     this.generateConfig();
@@ -44,18 +53,17 @@ export class NgCliWebpackConfig {
 
   generateConfig(): void {
     switch (this.target) {
-      case "development":
-        this.config = webpackMerge(this.webpackBaseConfig, this.webpackDevConfigPartial);
+      case 'development':
+        this.config = webpackMerge(this.baseConfig, this.devConfigPartial);
         break;
-      case "production":
-        this.config = webpackMerge(this.webpackBaseConfig, this.webpackProdConfigPartial);
+      case 'production':
+        this.config = webpackMerge(this.baseConfig, this.prodConfigPartial);
         break;
       case "native":
-        this.config = webpackMerge(this.webpackBaseConfig, this.webpackNativeConfigPartial);
+        this.config = webpackMerge(this.baseConfig, this.nativeConfigPartial);
         break;
       default:
         throw new Error("Invalid build target. Only 'development' and 'production' are available.");
-        break;
     }
   }
 }

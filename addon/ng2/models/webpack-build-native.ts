@@ -5,7 +5,6 @@ import * as CompressionPlugin from 'compression-webpack-plugin';
 import * as webpack from 'webpack';
 
 export const getWebpackNativeConfigPartial = function(projectRoot: string, appConfig: any) {
-  console.log("NATIVE CONFIG");
   return {
     debug: false,
     devtool: 'source-map',

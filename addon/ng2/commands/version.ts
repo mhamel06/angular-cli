@@ -1,4 +1,4 @@
-import * as Command from 'ember-cli/lib/models/command';
+const Command = require('ember-cli/lib/models/command');
 import * as path from 'path';
 import * as child_process from 'child_process';
 
@@ -13,19 +13,19 @@ const VersionCommand = Command.extend({
     type: Boolean, 'default': false
   }],
 
-  run: function (options) {
-    var versions = process.versions;
-    var pkg = require(path.resolve(__dirname, '..', '..', '..', 'package.json'));
+  run: function (options: any) {
+    const versions: any = process.versions;
+    const pkg = require(path.resolve(__dirname, '..', '..', '..', 'package.json'));
 
     versions['os'] = process.platform + ' ' + process.arch;
 
-    var alwaysPrint = ['node', 'os'];
+    const alwaysPrint = ['node', 'os'];
 
-    var ngCliVersion = pkg.version;
+    let ngCliVersion = pkg.version;
     if (!__dirname.match(/node_modules/)) {
-      var gitBranch = '??';
+      let gitBranch = '??';
       try {
-        var gitRefName = '' + child_process.execSync('git symbolic-ref HEAD', {cwd: __dirname});
+        const gitRefName = '' + child_process.execSync('git symbolic-ref HEAD', {cwd: __dirname});
         gitBranch = path.basename(gitRefName.replace('\n', ''));
       } catch (e) {
       }
@@ -35,18 +35,18 @@ const VersionCommand = Command.extend({
 
     this.printVersion('angular-cli', ngCliVersion);
 
-    for (var module in versions) {
+    for (const module of Object.keys(versions)) {
       if (options.verbose || alwaysPrint.indexOf(module) > -1) {
         this.printVersion(module, versions[module]);
       }
     }
   },
 
-  printVersion: function (module, version) {
+  printVersion: function (module: string, version: string) {
     this.ui.writeLine(module + ': ' + version);
   }
 });
 
 
-module.exports = VersionCommand;
-module.exports.overrideCore = true;
+VersionCommand.overrideCore = true;
+export default VersionCommand;

@@ -1,21 +1,31 @@
 import * as path from 'path';
-import * as CopyWebpackPlugin from 'copy-webpack-plugin';
-import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 import * as webpack from 'webpack';
 import * as autoprefixer from 'autoprefixer';
-import * as atl from 'awesome-typescript-loader';
+const atl = require('awesome-typescript-loader');
 
-import {findLazyModules} from './find-lazy-modules';
+import { BaseHrefWebpackPlugin } from '@angular-cli/base-href-webpack';
+import { findLazyModules } from './find-lazy-modules';
 
-export function getWebpackCommonConfig(projectRoot: string, environment: string, appConfig: any) {
+export function getWebpackCommonConfig(
+  projectRoot: string,
+  environment: string,
+  appConfig: any,
+  baseHref: string
+) {
 
   const appRoot = path.resolve(projectRoot, appConfig.root);
   const appMain = path.resolve(appRoot, appConfig.main);
-  const styles = appConfig.styles.map(style => path.resolve(appRoot, style));
-  const scripts = appConfig.scripts.map(script => path.resolve(appRoot, script));
+  const styles = appConfig.styles
+               ? appConfig.styles.map((style: string) => path.resolve(appRoot, style))
+               : [];
+  const scripts = appConfig.scripts
+                ? appConfig.scripts.map((script: string) => path.resolve(appRoot, script))
+                : [];
   const lazyModules = findLazyModules(appRoot);
 
-  let entry = { 
+  let entry: { [key: string]: string[] } = {
     main: [appMain]
   };
 const METADATA = {
@@ -23,8 +33,9 @@ const METADATA = {
   baseUrl: '/'
 };
   // Only add styles/scripts if there's actually entries there
-  if (appConfig.styles.length > 0) entry.styles = styles;
-  if (appConfig.scripts.length > 0) entry.scripts = scripts;
+  if (appConfig.styles.length > 0) { entry['styles'] = styles; }
+  if (appConfig.scripts.length > 0) { entry['scripts'] = scripts; }
+
   return {
     devtool: 'source-map',
     resolve: {
@@ -85,16 +96,42 @@ const METADATA = {
         },
 
         // in main, load css as raw text
-        { exclude: styles, test: /\.css$/, loaders: ['raw-loader', 'postcss-loader'] },
-        { exclude: styles, test: /\.styl$/, loaders: ['raw-loader', 'postcss-loader', 'stylus-loader'] },
-        { exclude: styles, test: /\.less$/, loaders: ['raw-loader', 'postcss-loader', 'less-loader'] },
-        { exclude: styles, test: /\.scss$|\.sass$/, loaders: ['raw-loader', 'postcss-loader', 'sass-loader'] },
+        {
+          exclude: styles,
+          test: /\.css/,
+          loaders: ['raw-loader', 'postcss-loader']
+        }, {
+          exclude: styles,
+          test: /\.styl$/,
+          loaders: ['raw-loader', 'postcss-loader', 'stylus-loader'] },
+        {
+          exclude: styles,
+          test: /\.less$/,
+          loaders: ['raw-loader', 'postcss-loader', 'less-loader']
+        }, {
+          exclude: styles,
+          test: /\.scss$|\.sass$/,
+          loaders: ['raw-loader', 'postcss-loader', 'sass-loader']
+        },
 
         // outside of main, load it via style-loader
-        { include: styles, test: /\.css$/, loaders: ['style-loader', 'css-loader', 'postcss-loader'] },
-        { include: styles, test: /\.styl$/, loaders: ['style-loader', 'css-loader', 'postcss-loader', 'stylus-loader'] },
-        { include: styles, test: /\.less$/, loaders: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'] },
-        { include: styles, test: /\.scss$|\.sass$/, loaders: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'] },
+        {
+          include: styles,
+          test: /\.css$/,
+          loaders: ['style-loader', 'css-loader', 'postcss-loader']
+        }, {
+          include: styles,
+          test: /\.styl$/,
+          loaders: ['style-loader', 'css-loader', 'postcss-loader', 'stylus-loader']
+        }, {
+          include: styles,
+          test: /\.less$/,
+          loaders: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader']
+        }, {
+          include: styles,
+          test: /\.scss$|\.sass$/,
+          loaders: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
+        },
 
         // load global scripts using script-loader
         { include: scripts, test: /\.js$/, loader: 'script-loader' },
@@ -121,17 +158,20 @@ const METADATA = {
         template: path.resolve(appRoot, appConfig.index),
         chunksSortMode: 'dependency'
       }),
+      new BaseHrefWebpackPlugin({
+        baseHref: baseHref
+      }),
       new webpack.NormalModuleReplacementPlugin(
         // This plugin is responsible for swapping the environment files.
         // Since it takes a RegExp as first parameter, we need to escape the path.
         // See https://webpack.github.io/docs/list-of-plugins.html#normalmodulereplacementplugin
-        new RegExp(path.resolve(appRoot, appConfig.environments.source)
-          .replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")),
+        new RegExp(path.resolve(appRoot, appConfig.environments['source'])
+          .replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')),
         path.resolve(appRoot, appConfig.environments[environment])
       ),
       new webpack.optimize.CommonsChunkPlugin({
         // Optimizing ensures loading order in index.html
-        name: ['styles', 'scripts', 'main'].reverse();
+        name: ['styles', 'scripts', 'main'].reverse()
       }),
       new webpack.optimize.CommonsChunkPlugin({
         minChunks: Infinity,
@@ -141,7 +181,8 @@ const METADATA = {
       }),
       new CopyWebpackPlugin([{
         context: path.resolve(appRoot, appConfig.assets),
-        from: '**/*',
+        from: { glob: '**/*', dot: true },
+        ignore: [ '.gitkeep' ],
         to: path.resolve(projectRoot, appConfig.outDir, appConfig.assets)
       }])
     ],
@@ -153,5 +194,5 @@ const METADATA = {
       clearImmediate: false,
       setImmediate: false
     }
-  }
+  };
 }
