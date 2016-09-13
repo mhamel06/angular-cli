@@ -7,6 +7,7 @@ const atl = require('awesome-typescript-loader');
 
 import { BaseHrefWebpackPlugin } from '@angular-cli/base-href-webpack';
 import { findLazyModules } from './find-lazy-modules';
+const Visualizer = require('webpack-visualizer-plugin');
 
 export function getWebpackCommonConfig(
   projectRoot: string,
@@ -74,6 +75,15 @@ const METADATA = {
           query: {
             search: 'moduleId: module.id,',
             replace: '',
+            flags: 'g'
+          }
+        },
+        {
+          test: /.component.ts$/,
+          loader: 'string-replace-loader',
+          query: {
+            search: 'component.css',
+            replace: 'component.scss',
             flags: 'g'
           }
         }
@@ -184,7 +194,11 @@ const METADATA = {
         from: { glob: '**/*', dot: true },
         ignore: [ '.gitkeep' ],
         to: path.resolve(projectRoot, appConfig.outDir, appConfig.assets)
-      }])
+      }]),
+      new Visualizer({
+        filename: '../statistics.html'
+      })
+
     ],
     node: {
       fs: 'empty',
