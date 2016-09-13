@@ -78,7 +78,7 @@ Navigate to `http://localhost:4200/`. The app will automatically reload if you c
 You can configure the default HTTP port and the one used by the LiveReload server with two command-line options :
 
 ```bash
-ng serve --port 4201 --live-reload-port 49153
+ng serve --host 0.0.0.0 --port 4201 --live-reload-port 49153
 ```
 
 ### Generating Components, Directives, Pipes and Services
@@ -125,13 +125,19 @@ The build artifacts will be stored in the `dist/` directory.
 
 ### Build Targets and Environment Files
 
-A build can specify both a build target (`development` or `production`) and an 
-environment file to be used with that build. By default, the development build 
-target is used.
+`ng build` can specify both a build target (`--target=production` or `--target=development`) and an 
+environment file to be used with that build (`--environment=dev` or `--environment=prod`). 
+By default, the development build target and environment are used.
 
-At build time, `src/environments/environment.ts` will be replaced by
-`src/environments/environment.NAME.ts` where `NAME` is the argument 
-provided to the `--environment` flag.
+The mapping used to determine which environment file is used can be found in `angular-cli.json`:
+
+```
+"environments": {
+  "source": "environments/environment.ts",
+  "dev": "environments/environment.ts",
+  "prod": "environments/environment.prod.ts"
+}
+```
 
 These options also apply to the serve command. If you do not pass a value for `environment`,
 it will default to `dev` for `development` and `prod` for `production`.
@@ -150,8 +156,8 @@ ng build
 
 You can also add your own env files other than `dev` and `prod` by doing the following:
 - create a `src/environments/environment.NAME.ts`
-- add `{ NAME: 'src/environments/environment.NAME.ts' }` to the the `apps[0].environments` object in `angular-cli.json` 
-- use them by using the `--env=NAME` flag on the build/serve commands.
+- add `{ "NAME": 'src/environments/environment.NAME.ts' }` to the the `apps[0].environments` object in `angular-cli.json` 
+- use them via the `--env=NAME` flag on the build/serve commands.
 
 ### Base tag handling in index.html
 
