@@ -13,6 +13,7 @@ export const getWebpackNativeConfigPartial = function(projectRoot: string, appCo
       sourceMapFilename: '[name].[chunkhash].bundle.map',
       chunkFilename: '[id].[chunkhash].chunk.js'
     },
+    isNative: true,
     plugins: [
       new WebpackMd5Hash(),
       new webpack.optimize.UglifyJsPlugin(<any>{

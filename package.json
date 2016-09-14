@@ -1,10 +1,6 @@
 {
   "name": "angular-cli",
-<<<<<<< HEAD
-  "version": "1.0.0-beta.11-webpack-ts2-2",
-=======
-  "version": "1.0.0-beta.11-webpack.9",
->>>>>>> c73f53b2949eab807837c41863c0d7a59848895b
+  "version": "1.0.0-beta.11-webpack-ts2-4",
   "description": "CLI tool for Angular",
   "main": "packages/angular-cli/lib/cli/index.js",
   "trackingCode": "UA-8594346-19",

@@ -25,7 +25,7 @@ export function getWebpackCommonConfig(
                 ? appConfig.scripts.map((script: string) => path.resolve(appRoot, script))
                 : [];
   const lazyModules = findLazyModules(appRoot);
-
+  console.log(lazyModules);
   let entry: { [key: string]: string[] } = {
     main: [appMain]
   };

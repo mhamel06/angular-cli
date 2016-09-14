@@ -19,7 +19,7 @@ export function findLoadChildren(tsFilePath: string): string[] {
     .reduce((prev, curr) => curr ? prev.concat(curr) : prev, [])
     // Remove every property assignment that aren't 'loadChildren'.
     .filter((node: ts.PropertyAssignment) => {
-      const key = getContentOfKeyLiteral(source, node.name);
+      const key = getContentOfKeyLiteral(source, node.name);    
       if (!key) {
         // key is an expression, can't do anything.
         return false;
